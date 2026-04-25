@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>📝 Hetarth's To-Do App</title>
+  <title>📝 To-Do App</title>
   <!--
     Flask's url_for('static', filename=...) generates the correct path
     to anything inside the /static/ folder — works on any machine.
@@ -25,7 +25,7 @@
     <div class="header-top">
       <div>
         <h1 class="app-title">📝 TaskCrush</h1>
-        <p class="greeting">Hey Hetarth, what are we crushing today? 🚀</p>
+        <p class="greeting">Hey User, what are we crushing today? 🚀</p>
       </div>
     </div>
 
@@ -50,7 +50,7 @@
     ─────────────────────────────────────────────────────────────────── -->
     {% if request.args.get('error') == 'empty' %}
     <div class="error-banner">
-      ⚠️ &nbsp; Oops! You can't add an empty task, Hetarth. Write something first!
+      ⚠️ &nbsp; Oops! You can't add an empty task, User. Write something first!
     </div>
     {% endif %}
 
