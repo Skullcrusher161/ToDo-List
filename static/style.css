@@ -1,0 +1,442 @@
+/* ==========================================================================
+   style.css — Hetarth's Neubrutalist To-Do App
+   ==========================================================================
+   Design Direction: Neubrutalism / Pop-Art
+   ─────────────────────────────────────────
+   Neubrutalism is a UI trend that deliberately breaks "polished" SaaS
+   conventions: thick black borders, hard offset shadows, saturated colors,
+   and flat surfaces. It feels handmade — like doodling in a notebook.
+
+   UX Psychology notes:
+     • Cream (#fef3c7) background → warm, non-fatiguing base
+     • Yellow (#facc15)           → attention, energy, optimism (Add CTA)
+     • Sky Blue (#38bdf8)         → calm, trust, focus (task cards)
+     • Coral/Red (#fb7185)        → urgency, caution (delete)
+     • Lime Green (#86efac)       → success, completion (done state)
+   ========================================================================== */
+
+/* ── Font import ─────────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&family=Righteous&display=swap');
+
+/* ── Design tokens ───────────────────────────────────────────────────────── */
+:root {
+  --cream:        #fef3c7;
+  --white:        #ffffff;
+  --ink:          #0f172a;   /* near-black — borders, text, shadows      */
+
+  --yellow:       #facc15;   /* Add button, header accent                */
+  --yellow-hover: #eab308;
+  --yellow-light: #fef9c3;
+
+  --blue:         #38bdf8;   /* task card background                     */
+  --blue-border:  #0ea5e9;
+
+  --coral:        #fb7185;   /* delete button                            */
+  --coral-hover:  #f43f5e;
+
+  --lime:         #86efac;   /* completed task background                */
+  --lime-border:  #4ade80;
+
+  --orange:       #fb923c;   /* validation error                         */
+
+  --border-w:     3px;       /* thick border width — the Neubrutalist key */
+  --shadow:       8px 8px 0px var(--ink);
+  --shadow-sm:    4px 4px 0px var(--ink);
+
+  --font-body:    'Nunito', sans-serif;
+  --font-display: 'Righteous', cursive;
+
+  --radius:       12px;
+}
+
+/* ── Reset ───────────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Base page ───────────────────────────────────────────────────────────── */
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: var(--cream);
+  /* Subtle dot grid — evokes grid paper / notebook feel */
+  background-image: radial-gradient(circle, #d97706 1px, transparent 1px);
+  background-size: 24px 24px;
+  background-attachment: fixed;
+
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--ink);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 16px 80px;
+}
+
+/* ── Main layout card ────────────────────────────────────────────────────── */
+.app-card {
+  width: 100%;
+  max-width: 700px;
+  background: var(--white);
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);   /* ← the Neubrutalist signature shadow   */
+  overflow: hidden;
+  animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.94) translateY(12px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0);    }
+}
+
+/* ── Header strip ────────────────────────────────────────────────────────── */
+.app-header {
+  background: var(--yellow);
+  border-bottom: var(--border-w) solid var(--ink);
+  padding: 28px 32px 24px;
+}
+
+.header-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.app-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 5vw, 2.6rem);
+  letter-spacing: 0.01em;
+  line-height: 1.1;
+  color: var(--ink);
+}
+
+.greeting {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-top: 6px;
+  opacity: 0.75;
+  letter-spacing: 0.02em;
+}
+
+/* Stats chips in the header */
+.stats-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.stat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--white);
+  border: var(--border-w) solid var(--ink);
+  border-radius: 99px;
+  padding: 4px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: var(--shadow-sm);
+  white-space: nowrap;
+}
+
+/* ── Body section ────────────────────────────────────────────────────────── */
+.app-body {
+  padding: 28px 32px 32px;
+}
+
+/* ── Validation error banner ─────────────────────────────────────────────── */
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--orange);
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius);
+  padding: 12px 18px;
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-sm);
+  animation: shake 0.4s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0);   }
+  25%       { transform: translateX(-6px); }
+  75%       { transform: translateX(6px);  }
+}
+
+/* ── Add-task form ───────────────────────────────────────────────────────── */
+.add-form-label {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  opacity: 0.5;
+  margin-bottom: 8px;
+}
+
+.add-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 32px;
+}
+
+.add-input {
+  flex: 1;
+  background: var(--white);
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius);
+  padding: 13px 18px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  outline: none;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.15s, transform 0.15s;
+}
+
+.add-input::placeholder { color: #94a3b8; font-weight: 400; }
+
+/* Focus: lift the input up to close the shadow gap — tactile feedback */
+.add-input:focus {
+  box-shadow: 2px 2px 0px var(--ink);
+  transform: translate(2px, 2px);
+}
+
+.btn-add {
+  background: var(--yellow);
+  color: var(--ink);
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius);
+  padding: 13px 22px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.12s, transform 0.12s, background 0.12s;
+  white-space: nowrap;
+}
+
+/* Pressing a Neubrutalist button "sinks" it — shadow collapses */
+.btn-add:hover  { background: var(--yellow-hover); }
+.btn-add:active {
+  box-shadow: none;
+  transform: translate(4px, 4px);
+}
+
+/* ── Section divider ─────────────────────────────────────────────────────── */
+.section-title {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ink);
+  opacity: 0.4;
+  margin-bottom: 12px;
+}
+
+/* ── Task list ───────────────────────────────────────────────────────────── */
+.task-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ── Individual task card ────────────────────────────────────────────────── */
+/*
+   CSS Flexbox: display:flex + justify-content:space-between
+   pushes the task text to the left and the action buttons to the right.
+*/
+.task-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;   /* ← Flexbox key property */
+  gap: 12px;
+
+  background: var(--blue);
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  box-shadow: var(--shadow-sm);
+
+  /* CSS Transition — smoothly animates all changing properties */
+  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.15s ease,
+              background 0.2s ease;
+
+  /* Staggered entrance animation */
+  animation: slideUp 0.3s ease both;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* Interactive hover: card grows slightly — shows CSS Transitions in action */
+.task-card:hover {
+  transform: scale(1.02) translateY(-2px);
+  box-shadow: 10px 10px 0px var(--ink);
+}
+
+/* Done state: swap blue for lime green */
+.task-card.is-done {
+  background: var(--lime);
+  border-color: var(--lime-border);
+}
+
+/* Stagger each card's entrance by 40 ms per item */
+.task-card:nth-child(1)  { animation-delay: 0.00s; }
+.task-card:nth-child(2)  { animation-delay: 0.04s; }
+.task-card:nth-child(3)  { animation-delay: 0.08s; }
+.task-card:nth-child(4)  { animation-delay: 0.12s; }
+.task-card:nth-child(5)  { animation-delay: 0.16s; }
+.task-card:nth-child(6)  { animation-delay: 0.20s; }
+.task-card:nth-child(7)  { animation-delay: 0.24s; }
+.task-card:nth-child(8)  { animation-delay: 0.28s; }
+.task-card:nth-child(9)  { animation-delay: 0.32s; }
+.task-card:nth-child(10) { animation-delay: 0.36s; }
+
+/* Task text */
+.task-text {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  word-break: break-word;
+  transition: opacity 0.2s;
+}
+
+.task-card.is-done .task-text {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+/* Action buttons group */
+.task-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* Shared button base */
+.btn-task {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border: var(--border-w) solid var(--ink);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 3px 3px 0px var(--ink);
+  transition: box-shadow 0.1s, transform 0.1s;
+}
+
+.btn-task:active {
+  box-shadow: none;
+  transform: translate(3px, 3px);
+}
+
+/* ✅ Complete button */
+.btn-complete {
+  background: var(--white);
+  color: var(--ink);
+}
+.btn-complete:hover { background: var(--yellow-light); }
+
+/* 🗑️ Delete button */
+.btn-delete {
+  background: var(--coral);
+  color: var(--ink);
+}
+.btn-delete:hover { background: var(--coral-hover); color: #fff; }
+
+/* ── Empty state ─────────────────────────────────────────────────────────── */
+.empty-state {
+  text-align: center;
+  padding: 48px 20px;
+  border: var(--border-w) dashed #94a3b8;
+  border-radius: var(--radius);
+  background: var(--yellow-light);
+}
+
+.empty-icon { font-size: 2.8rem; margin-bottom: 12px; }
+
+.empty-state h3 {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  margin-bottom: 6px;
+}
+
+.empty-state p {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+/* ── Progress bar ────────────────────────────────────────────────────────── */
+.progress-wrap {
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: var(--border-w) dashed #cbd5e1;
+}
+
+.progress-label {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  opacity: 0.45;
+  margin-bottom: 8px;
+}
+
+.progress-track {
+  height: 14px;
+  background: #e2e8f0;
+  border: 2px solid var(--ink);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: var(--fill, 0%);
+  background: var(--lime);
+  border-right: 2px solid var(--ink);
+  border-radius: 99px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Footer ──────────────────────────────────────────────────────────────── */
+.app-footer {
+  margin-top: 28px;
+  width: 100%;
+  max-width: 700px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #92400e;
+  opacity: 0.7;
+}
