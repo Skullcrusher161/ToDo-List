@@ -1,0 +1,27 @@
+# Python bytecode cache — never commit these
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments — each developer creates their own locally
+venv/
+.venv/
+env/
+ENV/
+
+# Flask task data — this is runtime state, not source code
+tasks.json
+
+# IDE / editor config
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS artefacts
+.DS_Store
+Thumbs.db
+
+# Environment variable files (keep secrets out of git)
+.env
+.env.local
