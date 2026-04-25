@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>📝 Hetarth's To-Do App</title>
+  <!--
+    Flask's url_for('static', filename=...) generates the correct path
+    to anything inside the /static/ folder — works on any machine.
+  -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+
+<body>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     MAIN APP CARD
+     The single white panel that holds everything.
+     Neubrutalist style: thick black border + hard offset shadow.
+════════════════════════════════════════════════════════════════════════ -->
+<main class="app-card">
+
+  <!-- ── HEADER ── -->
+  <header class="app-header">
+    <div class="header-top">
+      <div>
+        <h1 class="app-title">📝 TaskCrush</h1>
+        <p class="greeting">Hey Hetarth, what are we crushing today? 🚀</p>
+      </div>
+    </div>
+
+    <!--
+      Stats chips: Jinja2 injects the Python variables total, done,
+      remaining that were passed from app.py's index() function.
+    -->
+    <div class="stats-row">
+      <span class="stat-chip">📋 {{ total }} Total</span>
+      <span class="stat-chip">✅ {{ done }} Done</span>
+      <span class="stat-chip">⏳ {{ remaining }} Left</span>
+    </div>
+  </header>
+
+  <!-- ── BODY ── -->
+  <div class="app-body">
+
+    <!-- ── VALIDATION ERROR BANNER ──────────────────────────────────────
+         Flask redirects to /?error=empty when the input is blank.
+         Jinja2 checks request.args to show or hide this banner.
+         This is purely server-side validation — no JavaScript needed.
+    ─────────────────────────────────────────────────────────────────── -->
+    {% if request.args.get('error') == 'empty' %}
+    <div class="error-banner">
+      ⚠️ &nbsp; Oops! You can't add an empty task, Hetarth. Write something first!
+    </div>
+    {% endif %}
+
+    <!-- ── ADD TASK FORM  →  POST /add_task ─────────────────────────────
+         method="POST" sends data in the HTTP request body, not the URL.
+         The 'content' field name must match request.form.get('content')
+         in app.py exactly.
+    ─────────────────────────────────────────────────────────────────── -->
+    <p class="add-form-label">✏️ New task</p>
+    <form class="add-form" action="/add_task" method="POST">
+      <input
+        class="add-input"
+        type="text"
+        name="content"
+        placeholder="e.g. Finish DSA assignment by 6 PM…"
+        autocomplete="off"
+        autofocus
+      />
+      <button type="submit" class="btn-add">＋ ADD</button>
+    </form>
+
+    <!-- ── TASK LIST  ────────────────────────────────────────────────────
+         Jinja2 for-loop: iterates over the `tasks` list from app.py.
+         Each `task` is one dict with keys: id, content, done.
+    ─────────────────────────────────────────────────────────────────── -->
+    <p class="section-title">— Your Tasks —</p>
+
+    {% if tasks %}
+    <ul class="task-list">
+
+      {# Loop through every task dict in the list passed from Python #}
+      {% for task in tasks %}
+      <li class="task-card {% if task.done %}is-done{% endif %}">
+
+        <!-- Task content — strikethrough added via CSS when is-done -->
+        <span class="task-text">
+          {% if task.done %}✅{% else %}🔲{% endif %}
+          &nbsp;{{ task.content }}
+        </span>
+
+        <!-- Action buttons — each is a tiny POST form.
+             The task.id is embedded in the URL so Flask knows
+             which task to complete or delete. -->
+        <div class="task-actions">
+
+          <!-- Complete / Undo  →  POST /complete_task/<id> -->
+          <form action="/complete_task/{{ task.id }}" method="POST">
+            <button type="submit" class="btn-task btn-complete">
+              {% if task.done %}↩️ Undo{% else %}✅ Done{% endif %}
+            </button>
+          </form>
+
+          <!-- Delete  →  POST /delete_task/<id> -->
+          <form action="/delete_task/{{ task.id }}" method="POST">
+            <button type="submit" class="btn-task btn-delete">
+              🗑️ Del
+            </button>
+          </form>
+
+        </div>
+      </li>
+      {% endfor %}
+
+    </ul>
+
+    <!-- Progress bar — width is calculated server-side by Jinja2 -->
+    {% if total > 0 %}
+    <div class="progress-wrap">
+      <p class="progress-label">
+        Progress — {{ done }} of {{ total }} tasks crushed
+      </p>
+      <div class="progress-track">
+        <div
+          class="progress-fill"
+          style="--fill: {{ ((done / total) * 100) | round(1) }}%"
+        ></div>
+      </div>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <!-- Empty state: shown when the task list is completely empty -->
+    <div class="empty-state">
+      <div class="empty-icon">☕</div>
+      <h3>Your schedule is clear!</h3>
+      <p>Time for a coffee break? Add your first task above when you're ready.</p>
+    </div>
+    {% endif %}
+
+  </div><!-- /app-body -->
+
+</main><!-- /app-card -->
+
+<!-- ── FOOTER ── -->
+<footer class="app-footer">
+  <span>📚 B.Tech CSE &mdash; HCI Project</span>
+  <span>Built with ❤️ and Python &nbsp;·&nbsp; Hetarth Salat</span>
+</footer>
+
+</body>
+</html>
